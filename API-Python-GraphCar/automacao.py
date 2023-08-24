@@ -68,9 +68,9 @@ def CapturaDisco():
     "PercentualDisco" : disk_usage.percent
     }
     
-    
-    print(str(valoresDisco["TotalDisco"]/1000) + "Gb")
-    print(str(valoresDisco["TotalDiscoUsado"]/1000) + "Gb")
+    print(str(valoresDisco["TotalDisco"]))
+    print(str(valoresDisco["TotalDiscoUsado"]))
+    print(str(valoresDisco["TotalDiscoLivre"]))
     print(str(valoresDisco["PercentualDisco"]) + "%")
 
     print("=======================>-----------------<==========================\n")
