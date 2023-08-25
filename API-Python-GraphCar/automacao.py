@@ -45,11 +45,11 @@ def capturaRam():
     
     }
     
-    print(str(round(ValoresRAM["espacoTotalRAM"]/1e3,2)) + "Gb")
-    print(str(round(ValoresRAM["espacoDisponivelRAM"]/1e3,2)) + "Gb")
-    print(str(round(ValoresRAM["espacoUsadoRAM"]/1e3,2)) + "Gb")
-    print(str(round(ValoresRAM["porcentagemUsoRAM"])) + "%")
-    print(str(round(ValoresRAM["espacoLivreRAM"]/1e3,2)) + "Gb")
+    print("Espaço total de RAM: " + str(round(ValoresRAM["espacoTotalRAM"]/1e9,2)) + " Gb")
+    print("Espaço disponível de RAM: " + str(round(ValoresRAM["espacoDisponivelRAM"]/1e9,2)) + " Gb")
+    print("Espaço usado de RAM: " + str(round(ValoresRAM["espacoUsadoRAM"]/1e9,2)) + " Gb")
+    print("Porcentagem de RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
+    print("Espaço livre de RAM:" + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
 
     print("=======================>-----------------<==========================\n")
 
@@ -68,10 +68,10 @@ def CapturaDisco():
     "PercentualDisco" : disk_usage.percent
     }
     
-    print(str(valoresDisco["TotalDisco"]))
-    print(str(valoresDisco["TotalDiscoUsado"]))
-    print(str(valoresDisco["TotalDiscoLivre"]))
-    print(str(valoresDisco["PercentualDisco"]) + "%")
+    print("Total de Disco: " + str(round(valoresDisco["TotalDisco"]/1e9,2)) + " GHz")
+    print("Total de Disco usado: " + str(round(valoresDisco["TotalDiscoUsado"]/1e9,2)) + " GHz")
+    print("Total de Disco livre: " + str(round(valoresDisco["TotalDiscoLivre"]/1e9,2)) + " GHz")
+    print("Percentual de Disco: " + str(valoresDisco["PercentualDisco"]) + " %")
 
     print("=======================>-----------------<==========================\n")
 
