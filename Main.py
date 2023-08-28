@@ -15,8 +15,11 @@ def capturar_cpu():
 
     graph_use_cpu.graph_start()
 
-    # cat /sys/class/hwmon/hwmonX/in0_input
+    graph_use_cpu = Graph(plt, 'Temperatura CPU',
+                          lambda: psutil.cpu_times().user,  # Axes X
+                          lambda: psutil.sensors_temperatures()['coretemp'][0].current)  # Axes Y
 
+    graph_use_cpu.graph_start()
 
 def capturar_ram():
     graph_use_ram = Graph(plt, 'Uso Ram',
@@ -31,13 +34,14 @@ def capturar_disco():
     for partition in partitions:
         device = partition.device
 
-        try:
-            device_infos = psutil.disk_usage(device)
+        if not 'loop' in device:
+            try:
+                device_infos = psutil.disk_usage(device)
 
-            app.show_info(f"Disco - {device}", device_infos, 1e9, '.2f')
+                app.show_info(f"Disco - {device}", device_infos, 1e9, '.2f')
 
-        except Exception as e:
-            Logger.warning(f"Erro ao Ler Disco - {e}")
+            except Exception as e:
+                Logger.warning(f"Erro ao Ler Disco - {e}")
 
 
 if __name__ == "__main__":
