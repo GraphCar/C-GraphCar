@@ -1,4 +1,6 @@
 from threading import Thread
+import matplotlib
+matplotlib.use('TkAgg')
 
 MAX_GRAPH_AXES = 100
 
@@ -27,6 +29,8 @@ class Graph(Thread):
         self.__fig = self.plt.figure()
         self.__fig.suptitle(self.__title)
         self.__ax = self.__fig.add_subplot(111)
+
+        #self.__fig.show()
 
         y = list(range(0, MAX_GRAPH_AXES))
         x = list(range(0, MAX_GRAPH_AXES))
