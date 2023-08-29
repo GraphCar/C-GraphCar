@@ -1,3 +1,5 @@
+#!/home/aluno/anaconda3/bin/python
+
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -22,32 +24,24 @@ def capturaRam():
     
     }
 
+    # comando = "INSERT INTO Dados (idDados, temperatura, Memoria, Utilizacao, DateDado) VALUES (NULL, NULL, %s, %s, %s)"
+    # dados = (round(ValoresRAM["espacoTotalRAM"]/1e9,2), round(ValoresRAM["porcentagemUsoRAM"]), data_e_hora)
+    # cursor.execute(comando, dados)
 
-    comando = "INSERT INTO Dados (idDados, dado, dateDado, fkMedida, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    dados = (ValoresRAM["espacoTotalRAM"], data_e_hora, 3, 2) 
-    cursor.execute(comando, dados)
+    comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
+    dados = (round(ValoresRAM["espacoTotalRAM"]/1e9,2), 'Gb', data_e_hora, 2)
+    cursor.execute(comando,dados)
 
-    dados = (ValoresRAM["espacoDisponivelRAM"], data_e_hora, 3, 2) 
-    cursor.execute(comando, dados)
-
-    dados = (ValoresRAM["espacoUsadoRAM"], data_e_hora, 3, 2)
-    cursor.execute(comando, dados)
-
-    dados = (ValoresRAM["porcentagemUsoRAM"], data_e_hora, 2, 2)
-    cursor.execute(comando, dados)
-
-    dados = (ValoresRAM["espacoLivreRAM"], data_e_hora, 3, 2)
-    cursor.execute(comando, dados)
-
-
+    dados = (round(ValoresRAM["porcentagemUsoRAM"]), '%', data_e_hora, 2)
+    cursor.execute(comando,dados)
     con.commit()
     # print(cursor.rowcount, "Dados da RAM inseridos na tabela!")
     
     print("Espaço total de RAM: " + str(round(ValoresRAM["espacoTotalRAM"]/1e9,2)) + " Gb")
     print("Espaço disponível de RAM: " + str(round(ValoresRAM["espacoDisponivelRAM"]/1e9,2)) + " Gb")
     print("Espaço usado de RAM: " + str(round(ValoresRAM["espacoUsadoRAM"]/1e9,2)) + " Gb")
-    print("Porcentagem de RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
-    print("Espaço livre de RAM:" + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
+    print("Porcentagem de uso da RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
+    print("Espaço livre de RAM: " + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
 
     print("=======================>-----------------<==========================\n")
 

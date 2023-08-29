@@ -40,7 +40,7 @@ while True:
     if opcao_escolhida in menu_keys:
         if opcao_escolhida == 1:
             #CPU
-            os.system(f'{commando_incializacao}Dados/capturarCPU.py')
+            print(f'{commando_incializacao}Dados/capturarCPU.py')
             opcao_escolhida = -1
 
         elif opcao_escolhida == 2:

@@ -1,6 +1,7 @@
+-- SQLBook: Code
 CREATE USER 'GraphUser'@'localhost' IDENTIFIED BY 'Graph2023';
 GRANT ALL PRIVILEGES ON GraphCar.* TO 'GraphUser'@'localhost';
-flush privileges;
+FLUSH PRIVILEGES;
 
 DROP DATABASE IF EXISTS GraphCar;
 CREATE DATABASE GraphCar;
@@ -11,7 +12,8 @@ CREATE TABLE Usuario(
     nome VARCHAR(50),
     email VARCHAR(100) UNIQUE,
     senha VARCHAR(64),
-    cpf CHAR (11) UNIQUE, 
+    cpf CHAR (11) UNIQUE,
+    foto VARCHAR(100), 
     adm TINYINT
 );
 
@@ -33,9 +35,9 @@ CREATE TABLE Carro(
 CREATE TABLE Componentes(
 	idComponentes INT PRIMARY KEY AUTO_INCREMENT,
     NomeComponente VARCHAR(10),
-    VersaoDriver VARCHAR(15)
+    VersaoDriver VARCHAR(15),
     fkCarro INT,
-    FOREIGN KEY (fkCarro) REFERENCES Carro(idCarro);
+    FOREIGN KEY (fkCarro) REFERENCES Carro(idCarro)
 );
 
 CREATE TABLE Dados(
@@ -51,11 +53,19 @@ CREATE TABLE Dados(
 );
 
 DELIMITER //
-CREATE PROCEDURE CADASTRAR_MOTORISTA(IN US_NOME VARCHAR
-(50), US_EMAIL VARCHAR(100), US_SENHA VARCHAR(64), 
-US_CPF VARCHAR(11), C_PLACA VARCHAR(15), MC_MODELO VARCHAR(30)) BEGIN 
-	INSERT INTO usuario (nome, email, senha, CPF)
-	VALUES ( us_nome, us_email, us_senha, us_CPF);
+CREATE PROCEDURE CADASTRAR_MOTORISTA(IN 
+
+	US_NOME VARCHAR(50), 
+    US_EMAIL VARCHAR(100), 
+    US_SENHA VARCHAR(64), 
+	US_CPF VARCHAR(11),
+    US_ADM TINYINT, 
+    C_PLACA VARCHAR(15), 
+    MC_MODELO VARCHAR(30)
+    
+    ) BEGIN 
+	INSERT INTO usuario (nome, email, senha, CPF, adm)
+	VALUES ( us_nome, us_email, us_senha, us_CPF, us_adm);
     INSERT INTO ModeloCarro (Modelo)
     VALUES (mc_modelo);
 	INSERT INTO Carro (Placa , fkUsuario, fkModelo)
@@ -65,7 +75,7 @@ US_CPF VARCHAR(11), C_PLACA VARCHAR(15), MC_MODELO VARCHAR(30)) BEGIN
 	END// 
 DELIMITER ;
 
- -- SELECT * FROM usuario;
+-- SELECT * FROM usuario;
 -- SELECT * FROM carro;
 -- SELECT * FROM modeloCarro;
 
@@ -78,4 +88,4 @@ DELIMITER ;
 
 -- Exemplo de call da procedure
 -- CALL cadastrar_motorista 
--- ('lucas', 'lucas@gmail.com', 'lucas123', '54496745895', 'bbb9999', 'model X');
+-- ('lucas', 'lucas@gmail.com', 'lucas123', '55555555555', 'bbb9999', 'model X', 1);
