@@ -54,5 +54,43 @@ INSERT INTO Componentes (idComponentes, nomeComponente) VALUES (NULL, "CPU");
 INSERT INTO Componentes (idComponentes, nomeComponente) VALUES (NULL, "Memória RAM");
 INSERT INTO Componentes (idComponentes, nomeComponente) VALUES (NULL, "Disco");
 
+DELIMITER //
+CREATE PROCEDURE CADASTRAR_MOTORISTA(IN 
+
+	US_NOME VARCHAR(50), 
+    US_EMAIL VARCHAR(100), 
+    US_SENHA VARCHAR(64), 
+	US_CPF VARCHAR(11),
+    US_ADM TINYINT, 
+    C_PLACA VARCHAR(15), 
+    MC_MODELO VARCHAR(30)
+    
+    ) BEGIN 
+	INSERT INTO usuario (nome, email, senha, CPF, adm)
+	VALUES ( us_nome, us_email, us_senha, us_CPF, us_adm);
+    INSERT INTO ModeloCarro (Modelo)
+    VALUES (mc_modelo);
+	INSERT INTO Carro (Placa , fkUsuario, fkModelo)
+	VALUES ( c_placa,
+    (SELECT idUsuario FROM usuario WHERE email = us_email),
+    (SELECT idModelo FROM ModeloCarro WHERE idModelo = (SELECT idUsuario FROM usuario WHERE email = us_email)));
+	END// 
+DELIMITER ;
+
+-- SELECT * FROM usuario;
+-- SELECT * FROM carro;
+-- SELECT * FROM modeloCarro;
+
+-- DELETE from usuario WHERE idUsuario < 14 ;
+-- DELETE from ModeloCarro WHERE idCarro < 14 ;
+-- DELETE from Carro WHERE idCarro < 14;
+
+-- SELECT *
+--        FROM usuario u JOIN Carro c JOIN ModeloCarro mc on c.idCarro = mc.idCarro AND idUsuario = c.idCarro;
+
+-- Exemplo de call da procedure
+-- CALL cadastrar_motorista 
+-- ('lucas', 'lucas@gmail.com', 'lucas123', '55555555555', 'bbb9999', 'model X', 1);
+
 select * from Dados;
 select * from Componentes;

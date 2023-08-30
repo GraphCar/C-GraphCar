@@ -1,21 +1,13 @@
-import mysql.connector
-import psutil
 import platform
-import os
-from datetime import datetime
+import os 
 
-commando_incializacao = "gnome-terminal -- bash -c ./"
 
-print(platform.system())
-
+commando_incializacao = "gnome-terminal --bash -c ./" 
 
 
 if platform.system() == "Windows":
     commando_incializacao = "start "
 
-data_e_hora = datetime.now()
-con = mysql.connector.connect(host='localhost',database='GraphCar',user='GraphUser',password='Graph2023')
-cursor = con.cursor()
 
 def load_menu():
     print(f"""
@@ -33,14 +25,17 @@ def load_menu():
     return input(': ')
 
 menu_keys = [1,2,3,4,0]
-opcao_escolhida = int(load_menu())
+opcao_escolhida = int(load_menu()) 
 
 while True:
-    print(opcao_escolhida, type(opcao_escolhida))
+
+    #print(opcao_escolhida, type(opcao_escolhida))
+
     if opcao_escolhida in menu_keys:
+
         if opcao_escolhida == 1:
             #CPU
-            print(f'{commando_incializacao}Dados/capturarCPU.py')
+            os.system(f'{commando_incializacao}Dados/capturarCPU.py')
             opcao_escolhida = -1
 
         elif opcao_escolhida == 2:
@@ -62,6 +57,6 @@ while True:
 
         elif opcao_escolhida == 0:
             #exit
-            exit()
+            exit() 
     else:
-        opcao_escolhida = int(load_menu())
+        opcao_escolhida = int(load_menu()) 

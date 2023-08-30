@@ -1,14 +1,11 @@
-#!/home/aluno/anaconda3/bin/python
-
 import mysql.connector
 import psutil
 from datetime import datetime
 import os
 import time
-import subprocess
 
 data_e_hora = datetime.now()
-con = mysql.connector.connect(host='localhost',database='GraphCar',user='GraphUser',password='Graph2023')
+con = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
 cursor = con.cursor()
 
 def capturaCPU():
@@ -25,11 +22,20 @@ def capturaCPU():
         "threds": psutil.cpu_count(logical=True),
         "CPUAtual": psutil.cpu_percent(interval=None),
         "CPUDelay": psutil.cpu_percent(interval=None),
-        "Temperatura": psutil.sensors_temperatures()['coretemp'][0].current,
+        # "Temperatura": psutil.sensors_temperatures()['coretemp'][0].current,
     }
+    
 
-    
-    
+    comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
+    # dados = (CPU["Temperatura"], '°C', data_e_hora, 1)
+    # cursor.execute(comando,dados)
+
+    dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
+    cursor.execute(comando,dados)
+
+
+    con.commit()
+
     print("Tempo usuário: " + str(round(CPU["tempoUsuario"]/3600,1)) + "H")
     print("Tempo sistema: " + str(round(CPU["tempoSistema"]/3600,1)) + "H")
     print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
@@ -39,24 +45,9 @@ def capturaCPU():
     print("Threads: " + str(CPU["threds"]))
     print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%")
     print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
-    print("Temperatura da CPU: " + str(CPU["Temperatura"]) + "°C")
+    # print("Temperatura da CPU: " + str(CPU["Temperatura"]) + "°C")
 
     print("=======================>-----------<=========================\n")
-
-    # comando = "INSERT INTO Dados (idDados, temperatura, utilizacao, dateDado) VALUES (NULL, %s, %s, %s)"
-    # dados =( CPU["Temperatura"] ,CPU["CPUAtual"],data_e_hora,4, 1)
-    # cursor.execute(comando, dados)
-
-    comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    dados = (CPU["Temperatura"], '°C', data_e_hora, 1)
-    cursor.execute(comando,dados)
-
-    dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
-    cursor.execute(comando,dados)
-
-
-    con.commit()
-    # print(cursor.rowcount, "Dados da CPU inseridos na tabela!")
 
     
 

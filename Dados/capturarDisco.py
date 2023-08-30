@@ -1,5 +1,3 @@
-#!/home/aluno/anaconda3/bin/python
-
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -13,13 +11,15 @@ cursor = con.cursor()
 
 def CapturaDisco():
 
-    #disk_partitions() retorna todas as partições do disco, a variável abaixo seria como um vetor de todas as partições
     lista_discos = psutil.disk_partitions()
 
-    #para cada partição de disco naquela lista, ele captura/trata os dados, exibe e manda pro banco de dados
     for disco in lista_discos:
 
         print(f"==========================>   Disco: {disco.device}  <=============================\n")
+
+        valoresDisco = {
+            
+        }
         uso_disco = subprocess.check_output(["df", "-h", disco.device],text=True)
         uso_disco = uso_disco.split('/n')
         infos = uso_disco[1]
@@ -27,9 +27,6 @@ def CapturaDisco():
         intPercent = int(infos[9].replace('%', ''))
         percentual += intPercent/lista_discos
 
-        # comando = "INSERT INTO Dados (idDados, Temperatura, Memoria, Utilizacao, dateDado) VALUES (NULL, NULL, %s, %s, %s)"
-        # dados = (round(valoresDisco["TotalMemoriaDisco"]/1e9,2), round(valoresDisco["PorcentagemUsoDisco"]), data_e_hora)
-        # cursor.execute(comando, dados)
 
         comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
         dados = (round(valoresDisco["TotalMemoriaDisco"]/1e9,2), 'GHz', data_e_hora, 3)
