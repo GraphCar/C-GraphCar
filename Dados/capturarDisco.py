@@ -1,3 +1,4 @@
+#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -17,38 +18,42 @@ def CapturaDisco():
 
         print(f"==========================>   Disco: {disco.device}  <=============================\n")
 
+        uso_disco = psutil.disk_usage(disco.device)
+
         valoresDisco = {
-            
+            "TotalDiscoLivre": uso_disco.free,
+            "TotalMemoriaDisco": uso_disco.total
         }
-        uso_disco = subprocess.check_output(["df", "-h", disco.device],text=True)
-        uso_disco = uso_disco.split('/n')
-        infos = uso_disco[1]
-        infos = infos.split('')
-        intPercent = int(infos[9].replace('%', ''))
-        percentual += intPercent/lista_discos
+        saida_comando = subprocess.check_output(["df", "--output=pcent", disco.device],text=True)
+        saida_comando = saida_comando.split('\n')
+
+
+        info = saida_comando[1].strip()
+
+        
+        intPercent = int(info.replace('%', ''))
 
 
         comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-        dados = (round(valoresDisco["TotalMemoriaDisco"]/1e9,2), 'GHz', data_e_hora, 3)
+        dados = (round(valoresDisco["TotalMemoriaDisco"]/1e9,2), 'Gb', data_e_hora, 3)
         cursor.execute(comando, dados)
 
-        dados = (round(valoresDisco["PorcentagemUsoDisco"]), '%', data_e_hora, 3)
+        dados = (intPercent, '%', data_e_hora, 3)
         cursor.execute(comando, dados)
 
-        dados = (round(valoresDisco["TotalDiscoLivre"]/1e9,2), 'GHz', data_e_hora, 3)
+        dados = (round(valoresDisco["TotalDiscoLivre"]/1e9,2), 'Gb', data_e_hora, 3)
         cursor.execute(comando, dados)
         
         con.commit()
     
-        print("Total de Memória do Disco: " + str(round(valoresDisco["TotalMemoriaDisco"]/1e9,2)) + " GHz")
-        print("Total de Disco livre: " + str(round(valoresDisco["TotalDiscoLivre"]/1e9,2)) + " GHz")
-        print("Porcentagem de uso do disco: " + str(valoresDisco["PorcentagemUsoDisco"]) + " %")
+        print("Total de Memória do Disco: " + str(round(valoresDisco["TotalMemoriaDisco"]/1e9,2)) + " G")
+        print("Total de Disco livre: " + str(round(valoresDisco["TotalDiscoLivre"]/1e9,2)) + " G")
+        print("Porcentagem de uso do disco: " + str(intPercent) + " %")
 
         print("=======================>-----------------<==========================\n")
 
-        time.sleep(1)
 
 while True:
-    time.sleep(1)
-    os.system('cls')
+    os.system('clear')
     CapturaDisco()
+    time.sleep(60)

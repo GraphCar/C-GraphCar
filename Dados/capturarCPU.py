@@ -1,3 +1,4 @@
+#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -53,5 +54,5 @@ def capturaCPU():
 
 while True:
     time.sleep(1)
-    os.system('cls')
+    os.system('clear')
     capturaCPU()
