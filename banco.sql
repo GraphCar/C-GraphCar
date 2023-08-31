@@ -1,4 +1,4 @@
--- Active: 1693399463035@@127.0.0.1@3306@GraphCar
+-- Active: 1685408949990@@localhost@3306@Graphcar
 DELETE FROM mysql.user where user = 'GraphUser';
 
 CREATE USER 'GraphUser'@'%' IDENTIFIED BY 'Graph2023';
