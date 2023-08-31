@@ -4,6 +4,7 @@ import psutil
 from datetime import datetime
 import os
 import time
+import platform
 
 data_e_hora = datetime.now()
 con = mysql.connector.connect(host='localhost',database='GraphCar',user='GraphUser',password='Graph2023')
@@ -42,6 +43,10 @@ def capturaRam():
 
 
 while True:
+    if platform.system() == 'Windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+
     time.sleep(1)
-    os.system('clear')
     capturaRam()

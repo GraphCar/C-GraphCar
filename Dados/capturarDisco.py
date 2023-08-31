@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import time
 import subprocess
+import platform
 
 data_e_hora = datetime.now()
 con = mysql.connector.connect(host='localhost',database='GraphCar',user='GraphUser',password='Graph2023')
@@ -54,6 +55,11 @@ def CapturaDisco():
 
 
 while True:
-    os.system('clear')
-    CapturaDisco()
+
+    if platform.system() == 'Windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+
     time.sleep(60)
+    CapturaDisco()

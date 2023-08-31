@@ -28,8 +28,13 @@ def capturaCPU():
     
 
     comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    if platform.system() != 'windows':
+    if platform.system() != 'Windows':
+        Temperatura = psutil.sensors_temperatures()['coretemp'][0].current
+
         dados = (Temperatura, '°C', data_e_hora, 1)
+        cursor.execute(comando,dados)
+
+        dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
         cursor.execute(comando,dados)
     else:
         dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
@@ -48,8 +53,7 @@ def capturaCPU():
     print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%")
     print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
 
-    if platform.system() != 'windows':
-        Temperatura = psutil.sensors_temperatures()['coretemp'][0].current
+    if platform.system() != 'Windows':
         print("Temperatura da CPU: " + Temperatura + "°C")
 
     print("=======================>-----------<=========================\n")
@@ -57,6 +61,11 @@ def capturaCPU():
     
 
 while True:
+    
+    if platform.system() == 'Windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+
     time.sleep(1)
-    os.system('clear')
     capturaCPU()
