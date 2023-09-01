@@ -38,6 +38,36 @@ def capturaCPU():
 
     print("Tempo usuário: " + str(round(CPU["tempoUsuario"]/3600,1)) + "H")
     print("Tempo sistema: " + str(round(CPU["tempoSistema"]/3600,1)) + "H")
+
+    # if CPU["tempoOcioso"] < 70:
+    #     print()
+    # elif CPU["tempoOcioso"] >= 70 and CPU["tempoOcioso"] < 80:
+    #     print()
+    # else:
+    #     p
+
+    
+    # if CPU["frequenciaAtual"]:
+    #     print()
+    
+    # if CPU["frequenciaMaxima"]:
+    #     print()
+    
+    # if CPU["core"]:
+    #     print()
+    
+    # if CPU["threds"]:
+    #     print()
+    
+    # if CPU["CPUAtual"]:
+    #     print()
+    
+    # if CPU["CPUDelay"]:
+    #     print()
+    
+    # if CPU["Temperatura"]:
+    #    print()
+
     print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
     print("Frequência atual: " + str(round((CPU["frequenciaAtual"]/1e3),2)) + " GHz")
     print("Frequência máxima: " + str(round((CPU["frequenciaMaxima"]/1e3),2)) + " GHz")

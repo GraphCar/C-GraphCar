@@ -1,5 +1,5 @@
 import platform
-import os 
+import os
 
 
 commando_incializacao = "gnome-terminal --bash -c ./" 
