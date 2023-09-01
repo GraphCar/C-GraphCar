@@ -25,6 +25,21 @@ def capturaCPU():
         "CPUAtual": psutil.cpu_percent(interval=None),
         "CPUDelay": psutil.cpu_percent(interval=None)
     }
+
+    print("Tempo usuário: " + str(round(CPU["tempoUsuario"]/3600,1)) + "H")
+    print("Tempo sistema: " + str(round(CPU["tempoSistema"]/3600,1)) + "H")
+    print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
+    print("Frequência atual: " + str(round((CPU["frequenciaAtual"]/1e3),2)) + " GHz")
+    print("Frequência máxima: " + str(round((CPU["frequenciaMaxima"]/1e3),2)) + " GHz")
+    print("Núcleos: " + str(CPU["core"]))
+    print("Threads: " + str(CPU["threds"]))
+    print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%")
+    print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
+
+    if platform.system() != 'Windows':
+        print("Temperatura da CPU: " + Temperatura + "°C")
+
+    print("=======================>-----------<=========================\n")
     
 
     comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
@@ -42,30 +57,16 @@ def capturaCPU():
 
 
     con.commit()
-
-    print("Tempo usuário: " + str(round(CPU["tempoUsuario"]/3600,1)) + "H")
-    print("Tempo sistema: " + str(round(CPU["tempoSistema"]/3600,1)) + "H")
-    print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
-    print("Frequência atual: " + str(round((CPU["frequenciaAtual"]/1e3),2)) + " GHz")
-    print("Frequência máxima: " + str(round((CPU["frequenciaMaxima"]/1e3),2)) + " GHz")
-    print("Núcleos: " + str(CPU["core"]))
-    print("Threads: " + str(CPU["threds"]))
-    print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%")
-    print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
-
-    if platform.system() != 'Windows':
-        print("Temperatura da CPU: " + Temperatura + "°C")
-
-    print("=======================>-----------<=========================\n")
-
     
 
 while True:
     
     if platform.system() == 'Windows':
         os.system('cls')
+        capturaCPU()
     else:
         os.system('clear')
-
+        capturaCPU()
+        
     time.sleep(1)
-    capturaCPU()
+    

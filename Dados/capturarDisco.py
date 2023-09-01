@@ -25,14 +25,18 @@ def CapturaDisco():
             "TotalDiscoLivre": uso_disco.free,
             "TotalMemoriaDisco": uso_disco.total
         }
-        saida_comando = subprocess.check_output(["df", "--output=pcent", disco.device],text=True)
-        saida_comando = saida_comando.split('\n')
+
+        intPercent = uso_disco.percent
+
+        if platform.system() != 'Windows':
+            saida_comando = subprocess.check_output(["df", "--output=pcent", disco.device],text=True)
+            saida_comando = saida_comando.split('\n')
 
 
-        info = saida_comando[1].strip()
+            info = saida_comando[1].strip()
 
-        
-        intPercent = int(info.replace('%', ''))
+            
+            intPercent = int(info.replace('%', ''))
 
 
         comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
@@ -61,5 +65,5 @@ while True:
     else:
         os.system('clear')
 
-    time.sleep(60)
     CapturaDisco()
+    time.sleep(60)
