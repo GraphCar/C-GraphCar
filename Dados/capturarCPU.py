@@ -1,3 +1,4 @@
+#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -36,15 +37,15 @@ def capturaCPU():
     print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
 
     if platform.system() != 'Windows':
+        Temperatura = str(psutil.sensors_temperatures()['coretemp'][0].current)
         print("Temperatura da CPU: " + Temperatura + "°C")
 
     print("=======================>-----------<=========================\n")
     
 
     comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    if platform.system() != 'Windows':
-        Temperatura = psutil.sensors_temperatures()['coretemp'][0].current
 
+    if platform.system() != 'Windows':
         dados = (Temperatura, '°C', data_e_hora, 1)
         cursor.execute(comando,dados)
 
@@ -62,10 +63,9 @@ while True:
     
     if platform.system() == 'Windows':
         os.system('cls')
-        capturaCPU()
     else:
         os.system('clear')
-        capturaCPU()
-        
+    
+    capturaCPU()   
     time.sleep(1)
     
