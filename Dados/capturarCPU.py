@@ -1,8 +1,10 @@
+#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
 import os
 import time
+import platform
 
 data_e_hora = datetime.now()
 con = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
@@ -21,17 +23,17 @@ def capturaCPU():
         "core": psutil.cpu_count(logical=False),
         "threds": psutil.cpu_count(logical=True),
         "CPUAtual": psutil.cpu_percent(interval=None),
-        "CPUDelay": psutil.cpu_percent(interval=None),
-        # "Temperatura": psutil.sensors_temperatures()['coretemp'][0].current,
+        "CPUDelay": psutil.cpu_percent(interval=None)
     }
     
 
     comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    # dados = (CPU["Temperatura"], '°C', data_e_hora, 1)
-    # cursor.execute(comando,dados)
-
-    dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
-    cursor.execute(comando,dados)
+    if platform.system() != 'windows':
+        dados = (Temperatura, '°C', data_e_hora, 1)
+        cursor.execute(comando,dados)
+    else:
+        dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
+        cursor.execute(comando,dados)
 
 
     con.commit()
@@ -75,7 +77,10 @@ def capturaCPU():
     print("Threads: " + str(CPU["threds"]))
     print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%")
     print("Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
-    # print("Temperatura da CPU: " + str(CPU["Temperatura"]) + "°C")
+
+    if platform.system() != 'windows':
+        Temperatura = psutil.sensors_temperatures()['coretemp'][0].current
+        print("Temperatura da CPU: " + Temperatura + "°C")
 
     print("=======================>-----------<=========================\n")
 
@@ -83,5 +88,5 @@ def capturaCPU():
 
 while True:
     time.sleep(1)
-    os.system('cls')
+    os.system('clear')
     capturaCPU()

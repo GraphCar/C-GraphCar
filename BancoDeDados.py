@@ -2,7 +2,7 @@ import platform
 import os
 
 
-commando_incializacao = "gnome-terminal --bash -c ./" 
+commando_incializacao = "gnome-terminal -- bash -c ./" 
 
 
 if platform.system() == "Windows":
