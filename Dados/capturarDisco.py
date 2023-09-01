@@ -1,3 +1,4 @@
+#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
