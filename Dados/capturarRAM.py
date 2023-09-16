@@ -5,14 +5,33 @@ from datetime import datetime
 import os
 import time
 import platform
+import requests
+import json
 
 data_e_hora = datetime.now()
 con = mysql.connector.connect(host='localhost',database='GraphCar',user='GraphUser',password='Graph2023')
 cursor = con.cursor()
 
+temporizadorAberturaChamado = 0
+alertasEmSequencia = 0
+skiparTemporizador = True
+alertaRAM = "RAM se encontra em normalidade."
+tempoEmAlerta = 999
+temporizadorAberturaChamado = 0
+pularEspera = False
+
+chatEscolhido = "https://hooks.slack.com/services/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"
+
 def capturaRam():
 
-    print("=======================>   Memória RAM   <==========================\n")
+    global temporizadorAberturaChamado
+    global alertasEmSequencia
+    global skiparTemporizador
+    global alertaRAM
+    global tempoEmAlerta
+
+
+    print("===========================================>   Memória RAM   <============================================\n")
     
     ValoresRAM = {
         "espacoTotalRAM" : psutil.virtual_memory().total,
@@ -28,8 +47,6 @@ def capturaRam():
     print("Porcentagem de uso da RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
     print("Espaço livre de RAM: " + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
 
-    print("=======================>-----------------<==========================\n")
-
     comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
     dados = (round(ValoresRAM["espacoTotalRAM"]/1e9,2), 'Gb', data_e_hora, 2)
     cursor.execute(comando,dados)
@@ -38,6 +55,67 @@ def capturaRam():
     cursor.execute(comando,dados)
     
     con.commit()
+
+    temporizadorAberturaChamado = temporizadorAberturaChamado+1
+    if temporizadorAberturaChamado == 10 or skiparTemporizador:
+
+        if ValoresRAM["porcentagemUsoRAM"] > 80:
+
+            alertasEmSequencia = alertasEmSequencia + 1
+            
+            if alertasEmSequencia >= 2 :
+                alertaRAM = "🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+
+            else:
+                alertaRAM = ("🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização.")
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+
+            print(postMsg.status_code)
+            skiparTemporizador = False
+            temporizadorAberturaChamado = 0
+            tempoEmAlerta = alertasEmSequencia*5
+
+        elif ValoresRAM["porcentagemUsoRAM"] > 50:
+            
+            alertasEmSequencia = alertasEmSequencia + 1
+
+            if alertasEmSequencia >= 2 :
+                alertaRAM = "🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+                
+            else:
+                alertaRAM = ("🚨ALERTA🚨 Detectamos que a RAM está com mais de 50% De utilização.")
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+
+            print(postMsg.status_code)
+            skiparTemporizador = False
+            temporizadorAberturaChamado = 0
+            tempoEmAlerta = alertasEmSequencia*5
+
+        else:
+            skiparTemporizador = True
+            alertaRAM = "RAM se encontra em normalidade."
+            alertasEmSequencia = 0
+
+        if temporizadorAberturaChamado == 10:
+            temporizadorAberturaChamado = 0
+
+    print("\n" + alertaRAM + "\n")
+    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado, " min / 10 min)")
+
+    print("""
+________________________________________________________________________________________
+|OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
+|quando o temporizador reiniciar caso tenha sido enviado um alerta anteriormente, porém|
+|se for capturado um dado alarmante enquanto a RAM estiver em normalidade, então o...  |
+|...temporizador será ignorado.                                                        |
+|______________________________________________________________________________________|
+    """)
+
+    print("==========================================>-----------------<=============================================\n")
 
 
 while True:

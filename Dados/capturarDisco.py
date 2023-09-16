@@ -15,7 +15,7 @@ cursor = con.cursor()
 temporizadorAberturaChamado = 0
 alertasEmSequencia = 0
 skiparTemporizador = True
-alertaTerminal = "Disco se encontra em normalidade."
+alertaDisco = "Disco se encontra em normalidade."
 tempoEmAlerta = 999
 
 chatEscolhido = "https://hooks.slack.com/services/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"
@@ -26,14 +26,8 @@ def CapturaDisco():
     global temporizadorAberturaChamado
     global skiparTemporizador
     global alertasEmSequencia
-    global alertaTerminal
+    global alertaDisco
     global tempoEmAlerta
-
-    alertasDisco = {
-        "50percent": "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização.",
-        "80percent": "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.",
-        "frequente": f" Essa não é a primeira vez que captamos esse dado, já se passaram {tempoEmAlerta} min e até agora não houve melhoras!!"
-    }
 
     lista_discos = psutil.disk_partitions()
 
@@ -48,7 +42,7 @@ def CapturaDisco():
             "TotalMemoriaDisco": uso_disco.total
         }
 
-        porcentagemUsoDisco = uso_disco.percent
+        porcentagemUsoDisco = uso_disco.percent+50
 
         if platform.system() != 'Windows':
             saida_comando = subprocess.check_output(["df", "--output=pcent", disco.device],text=True)
@@ -85,12 +79,13 @@ def CapturaDisco():
             alertasEmSequencia = alertasEmSequencia + 1
             
             if alertasEmSequencia >= 2 :
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertasDisco["80percent"] + alertasDisco["frequente"]))
-                alertaTerminal = (alertasDisco["80percent"] +"..\n..."+ alertasDisco["frequente"])
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dele, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaDisco))
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dele, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
 
             else:
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertasDisco["80percent"]))
-                alertaTerminal = (alertasDisco["80percent"])
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização."
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaDisco))
 
             print(postMsg.status_code)
             skiparTemporizador = False
@@ -102,12 +97,13 @@ def CapturaDisco():
             alertasEmSequencia = alertasEmSequencia + 1
 
             if alertasEmSequencia >= 2 :
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertasDisco["50percent"] + alertasDisco["frequente"]))
-                alertaTerminal = (alertasDisco["50percent"] +"...\n..."+ alertasDisco["frequente"])
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dele, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaDisco))
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dele, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
                 
             else:
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertasDisco["50percent"]))
-                alertaTerminal = (alertasDisco["50percent"])
+                alertaDisco = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização."
+                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaDisco))
 
             print(postMsg.status_code)
             skiparTemporizador = False
@@ -116,18 +112,24 @@ def CapturaDisco():
 
         else:
             skiparTemporizador = True
-            alertaTerminal = "Disco se encontra em normalidade."
+            alertaDisco = "Disco se encontra em normalidade."
             alertasEmSequencia = 0
 
         if temporizadorAberturaChamado == 5:
             temporizadorAberturaChamado = 0
 
-    print("\n" + alertaTerminal + "\n")
-    print(">> Temporizador para abertura de chamado caso necessário: ",temporizadorAberturaChamado, " min")
-    print("OBS: Alertas no terminal são atualizados somente quando o temporizador reiniciar")
+    print("\n" + alertaDisco + "\n")
+    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado, " min / 5 min)")
+    print("""
+________________________________________________________________________________________
+|OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
+|quando o temporizador reiniciar caso tenha sido enviado um alerta anteriormente, porém|
+|se for capturado um dado alarmante enquanto o Disco estiver em normalidade, então o...|
+|...temporizador será ignorado.                                                        |
+|______________________________________________________________________________________|
+    """)
 
     print("==========================================>-----------------<=============================================\n")
-
 
 while True:
 
@@ -137,4 +139,4 @@ while True:
         os.system('clear')
 
     CapturaDisco()
-    time.sleep(5)
+    time.sleep(2)
