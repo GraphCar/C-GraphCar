@@ -15,9 +15,9 @@ temporizadorAberturaChamado = 0
 alertasEmSequencia = 0
 skiparTemporizador = True
 alertaCPU = "CPU se encontra em normalidade."
-tempoEmAlerta = 999
+tempoEmAlerta = 0
 
-chatEscolhido = "https://hooks.slack.com/services/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"
+chatEscolhido = "https://hooks.slack.com/services/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"
 
 
 def capturaCPU():
@@ -45,7 +45,7 @@ def capturaCPU():
     print("Tempo usuário: " + str(round(CPU["tempoUsuario"]/3600,1)) + "H", "             Tempo sistema: " + str(round(CPU["tempoSistema"]/3600,1)) + "H")
     print("Frequência atual: " + str(round((CPU["frequenciaAtual"]/1e3),2)) + " GHz", "       Frequência máxima: " + str(round((CPU["frequenciaMaxima"]/1e3),2)) + " GHz")
     print("Porcentagem da CPU atual: " + str(CPU["CPUAtual"]) + "%", "  Delay da CPU: " + str(CPU["CPUDelay"]) + "%")
-    print("Núcleos: " + str(CPU["core"]), " Threads: " + str(CPU["threds"]))
+    print("Núcleos: " + str(CPU["core"]), "                     Threads: " + str(CPU["threds"]))
     print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
 
     if platform.system() != 'Windows':
@@ -65,54 +65,71 @@ def capturaCPU():
         cursor.execute(comando,dados)
 
     temporizadorAberturaChamado = temporizadorAberturaChamado+1
-    if temporizadorAberturaChamado == 8 or skiparTemporizador:
+    if temporizadorAberturaChamado == 60 or skiparTemporizador:
 
-        if CPU["CPUAtual"] > 8:
+        if CPU["CPUAtual"] > 50:
 
             alertasEmSequencia = alertasEmSequencia + 1
             
             if alertasEmSequencia >= 2 :
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+
+                alertaCPU = {"text": f"""
+                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
+                """}
+
+                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+
+                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
 
             else:
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 80% De utilização."
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+                alertaCPU = {"text": f""" 
+                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.
+                """} 
+                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
 
-            print(postMsg.status_code)
+                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização."
+
             skiparTemporizador = False
             temporizadorAberturaChamado = 0
-            tempoEmAlerta = alertasEmSequencia*5
+            tempoEmAlerta = tempoEmAlerta + 5
 
-        elif CPU["CPUAtual"] > 6.5:
+        elif CPU["CPUAtual"] > 30:
             
             alertasEmSequencia = alertasEmSequencia + 1
 
             if alertasEmSequencia >= 2 :
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+                alertaCPU = {"text": f"""
+                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
+                """}
+
+                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+
+                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
                 
             else:
-                alertaCPU = "🚨ALERTA🚨 Detectamos que a CPU está com mais de 50% De utilização."
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+                alertaCPU = {"text": f"""
+                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.
+                """}
 
-            print(postMsg.status_code)
+                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+                
+                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+
             skiparTemporizador = False
             temporizadorAberturaChamado = 0
-            tempoEmAlerta = alertasEmSequencia*5
+            tempoEmAlerta = tempoEmAlerta + 5
 
         else:
             skiparTemporizador = True
             alertaCPU = "CPU se encontra em normalidade."
             alertasEmSequencia = 0
+            tempoEmAlerta = 0
 
-        if temporizadorAberturaChamado == 8:
+        if temporizadorAberturaChamado == 60:
             temporizadorAberturaChamado = 0
 
     print("\n" + alertaCPU + "\n")
-    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado, " min / 8 min)")
+    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado*5, "s / 5 min)")
     print("""
 ________________________________________________________________________________________
 |OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
@@ -135,5 +152,4 @@ while True:
         os.system('clear')
     
     capturaCPU()   
-    time.sleep(1)
-    
+    time.sleep(5)

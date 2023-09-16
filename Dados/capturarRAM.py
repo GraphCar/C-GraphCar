@@ -1,4 +1,3 @@
-#!/home/aluno/anaconda3/bin/python
 import mysql.connector
 import psutil
 from datetime import datetime
@@ -15,15 +14,15 @@ cursor = con.cursor()
 temporizadorAberturaChamado = 0
 alertasEmSequencia = 0
 skiparTemporizador = True
-alertaRAM = "RAM se encontra em normalidade."
-tempoEmAlerta = 999
-temporizadorAberturaChamado = 0
-pularEspera = False
+tempoEmAlerta = 999 
 
-chatEscolhido = "https://hooks.slack.com/services/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"
+alertaDisco = {"text": f""" 
+🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!
+"""} 
+
+chatEscolhido = "https://hooks.slack.com/services/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"
 
 def capturaRam():
-
     global temporizadorAberturaChamado
     global alertasEmSequencia
     global skiparTemporizador
@@ -56,55 +55,72 @@ def capturaRam():
     
     con.commit()
 
-    temporizadorAberturaChamado = temporizadorAberturaChamado+1
-    if temporizadorAberturaChamado == 10 or skiparTemporizador:
+    temporizadorAberturaChamado = temporizadorAberturaChamado+1 
+    if temporizadorAberturaChamado == 60 or skiparTemporizador:
 
-        if ValoresRAM["porcentagemUsoRAM"] > 80:
+        if ValoresRAM["porcentagemUsoRAM"] > 75:
 
             alertasEmSequencia = alertasEmSequencia + 1
             
             if alertasEmSequencia >= 2 :
-                alertaRAM = "🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
-                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+                alertaRAM = {"text": f""" 
+                🚨ALERTA🚨 Detectamos que a RAM está com mais de 75% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!
+                """} 
+
+                requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 75% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
 
             else:
-                alertaRAM = ("🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização.")
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+                alertaRAM = alertaRAM = {"text": f""" 
+                🚨ALERTA🚨 Detectamos que a RAM está com mais de 75% De utilização.
+                """} 
+                requests.post(chatEscolhido, data=json.dumps(alertaRAM))
 
-            print(postMsg.status_code)
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 75% De utilização."
+
             skiparTemporizador = False
             temporizadorAberturaChamado = 0
-            tempoEmAlerta = alertasEmSequencia*5
+            tempoEmAlerta = alertasEmSequencia
 
         elif ValoresRAM["porcentagemUsoRAM"] > 50:
             
             alertasEmSequencia = alertasEmSequencia + 1
 
             if alertasEmSequencia >= 2 :
-                alertaRAM = "🚨ALERTA🚨 Detectamos que a RAM está com mais de 80% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora não houve melhoras!!"
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
-                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 80% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+
+                alertaRAM = {"text": f""" 
+                🚨ALERTA🚨 Detectamos que a RAM está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!
+                """} 
+
+                requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
                 
             else:
-                alertaRAM = ("🚨ALERTA🚨 Detectamos que a RAM está com mais de 50% De utilização.")
-                postMsg = requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+                alertaRAM = {"text": f""" 
+                🚨ALERTA🚨 Detectamos que a RAM está com mais de 50% De utilização.
+                """} 
 
-            print(postMsg.status_code)
+                requests.post(chatEscolhido, data=json.dumps(alertaRAM))
+
+                alertaRAM = "🚨ALERTA🚨 Detectamos que o Disco está com mais de 50% De utilização."
+
             skiparTemporizador = False
             temporizadorAberturaChamado = 0
-            tempoEmAlerta = alertasEmSequencia*5
+            tempoEmAlerta = alertasEmSequencia
 
         else:
             skiparTemporizador = True
             alertaRAM = "RAM se encontra em normalidade."
             alertasEmSequencia = 0
+            tempoEmAlerta = 0
 
-        if temporizadorAberturaChamado == 10:
+        if temporizadorAberturaChamado == 60:
             temporizadorAberturaChamado = 0
 
     print("\n" + alertaRAM + "\n")
-    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado, " min / 10 min)")
+    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado, "s / 1min)")
 
     print("""
 ________________________________________________________________________________________
