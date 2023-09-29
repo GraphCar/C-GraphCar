@@ -50,9 +50,7 @@ while True:
 
         elif opcao_escolhida == 4:
             #all
-            os.system(f'{commando_incializacao}Dados/capturarCPU.py')
-            os.system(f'{commando_incializacao}Dados/capturarDisco.py')
-            os.system(f'{commando_incializacao}Dados/capturarRAM.py')
+            os.system(f'{commando_incializacao}Dados/capturarTodos.py')
             opcao_escolhida = -1
 
         elif opcao_escolhida == 0:
