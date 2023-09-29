@@ -46,11 +46,8 @@ def capturaRam():
     print("Porcentagem de uso da RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
     print("Espaço livre de RAM: " + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
 
-    comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
-    dados = (round(ValoresRAM["espacoTotalRAM"]/1e9,2), 'Gb', data_e_hora, 2)
-    cursor.execute(comando,dados)
-
-    dados = (round(ValoresRAM["porcentagemUsoRAM"]), '%', data_e_hora, 2)
+    comando = "INSERT INTO Dados (idDados, memoria, dateDado, fkCarro) VALUES (NULL, %s, now(), %s)"
+    dados = (round(ValoresRAM["porcentagemUsoRAM"]), 1)
     cursor.execute(comando,dados)
     
     con.commit()

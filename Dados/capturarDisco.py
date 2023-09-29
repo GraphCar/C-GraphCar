@@ -157,5 +157,5 @@ while True:
     else:
         os.system('clear')
 
-    CapturaDisco()
+    #CapturaDisco()
     time.sleep(60)

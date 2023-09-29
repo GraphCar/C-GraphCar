@@ -52,16 +52,13 @@ def capturaCPU():
         Temperatura = str(psutil.sensors_temperatures()['coretemp'][0].current)
         print("Temperatura da CPU: " + Temperatura + "°C")
 
-    comando = "INSERT INTO Dados (idDados, dado, medida, dateDado, fkComponentes) VALUES (NULL, %s, %s, %s, %s)"
+    comando = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, dateDado, fkCarro) VALUES (NULL, %s, %s, now(), %s)"
 
     if platform.system() != 'Windows':
-        dados = (Temperatura, '°C', data_e_hora, 1)
-        cursor.execute(comando,dados)
-
-        dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
+        dados = (CPU["CPUAtual"], Temperatura, 1)
         cursor.execute(comando,dados)
     else:
-        dados = (CPU["CPUAtual"], '%', data_e_hora, 1)
+        dados = (CPU["CPUAtual"], None, 1)
         cursor.execute(comando,dados)
 
     temporizadorAberturaChamado = temporizadorAberturaChamado+1
