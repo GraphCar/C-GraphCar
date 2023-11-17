@@ -70,17 +70,19 @@ def capturaTodos():
 
     ValoresBateria = {
         "nivel": psutil.sensors_battery().percent,
+        "tempo_restante": psutil.sensors_battery().secsleft,
     }
 
     print("Nível da bateria: " + str(round(ValoresBateria["nivel"])))
+    print("Tempo Restante: " + str(round(ValoresBateria["tempo_restante"])))
 
-    comando = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
+    comando = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
 
     if platform.system() != 'Windows':
-        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, 1)
+        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), ValoresBateria["tempo_restante"], None, 1)
         cursor.execute(comando,dados)
     else:
-        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, 1)
+        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, None, 1)
         cursor.execute(comando,dados)
 
     temporizadorAberturaChamado = temporizadorAberturaChamado+1
