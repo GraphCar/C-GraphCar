@@ -77,12 +77,12 @@ def capturaTodos():
     print("Tempo Restante: " + str(round(ValoresBateria["tempo_restante"])))
 
     comando = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
-
+    print(ValoresBateria["tempo_restante"])
     if platform.system() != 'Windows':
-        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), ValoresBateria["tempo_restante"], None, 1)
+        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
         cursor.execute(comando,dados)
     else:
-        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, None, 1)
+        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
         cursor.execute(comando,dados)
 
     temporizadorAberturaChamado = temporizadorAberturaChamado+1
