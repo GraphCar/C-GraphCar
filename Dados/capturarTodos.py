@@ -1,4 +1,5 @@
 import mysql.connector
+import pyodbc
 import psutil
 from datetime import datetime
 import os
@@ -8,16 +9,17 @@ import requests
 import json
 
 data_e_hora = datetime.now()
-con = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
-cursor = con.cursor()
+con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
+cursor_mysql = con_mysql.cursor()
+
+con_mssql = pyodbc.connect('DRIVER={SQL Server};SERVER=54.172.138.164;DATABASE=GraphCar;UID=sa;PWD=urubu100')
+cursor_mssql = con_mssql.cursor()
 
 temporizadorAberturaChamado = 0
 alertasEmSequencia = 0
 skiparTemporizador = True
 alertaCPU = "CPU se encontra em normalidade."
 tempoEmAlerta = 0
-
-chatEscolhido = "https://hooks.slack.com/services/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"
 
 
 def capturaTodos():
@@ -76,93 +78,97 @@ def capturaTodos():
     print("Nível da bateria: " + str(round(ValoresBateria["nivel"])))
     print("Tempo Restante: " + str(round(ValoresBateria["tempo_restante"])))
 
-    comando = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
+    comando_mysql = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
+    comando_mssql = "INSERT INTO Dados (cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)"
     print(ValoresBateria["tempo_restante"])
     if platform.system() != 'Windows':
         dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-        cursor.execute(comando,dados)
+        cursor_mysql.execute(comando_mysql,dados)
+        cursor_mssql.execute(comando_mssql, dados)
     else:
         dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-        cursor.execute(comando,dados)
+        cursor_mysql.execute(comando_mysql,dados)
+        cursor_mssql.execute(comando_mssql, dados)
 
-    temporizadorAberturaChamado = temporizadorAberturaChamado+1
-    if temporizadorAberturaChamado == 60 or skiparTemporizador:
+    # temporizadorAberturaChamado = temporizadorAberturaChamado+1
+    # if temporizadorAberturaChamado == 60 or skiparTemporizador:
 
-        if CPU["CPUAtual"] > 50:
+    #     if CPU["CPUAtual"] > 50:
 
-            alertasEmSequencia = alertasEmSequencia + 1
+    #         alertasEmSequencia = alertasEmSequencia + 1
             
-            if alertasEmSequencia >= 2 :
+    #         if alertasEmSequencia >= 2 :
 
-                alertaCPU = {"text": f"""
-                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
-                """}
+    #             alertaCPU = {"text": f"""
+    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
+    #             """}
 
-                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
 
-                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
 
-            else:
-                alertaCPU = {"text": f""" 
-                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.
-                """} 
-                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+    #         else:
+    #             alertaCPU = {"text": f""" 
+    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.
+    #             """} 
+    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
 
-                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização."
+    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização."
 
-            skiparTemporizador = False
-            temporizadorAberturaChamado = 0
-            tempoEmAlerta = tempoEmAlerta + 5
+    #         skiparTemporizador = False
+    #         temporizadorAberturaChamado = 0
+    #         tempoEmAlerta = tempoEmAlerta + 5
 
-        elif CPU["CPUAtual"] > 30:
+    #     elif CPU["CPUAtual"] > 30:
             
-            alertasEmSequencia = alertasEmSequencia + 1
+    #         alertasEmSequencia = alertasEmSequencia + 1
 
-            if alertasEmSequencia >= 2 :
-                alertaCPU = {"text": f"""
-                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
-                """}
+    #         if alertasEmSequencia >= 2 :
+    #             alertaCPU = {"text": f"""
+    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
+    #             """}
 
-                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
 
-                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
                 
-            else:
-                alertaCPU = {"text": f"""
-                🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.
-                """}
+    #         else:
+    #             alertaCPU = {"text": f"""
+    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.
+    #             """}
 
-                requests.post(chatEscolhido, data=json.dumps(alertaCPU))
+    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
                 
-                alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
+    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
 
-            skiparTemporizador = False
-            temporizadorAberturaChamado = 0
-            tempoEmAlerta = tempoEmAlerta + 5
+    #         skiparTemporizador = False
+    #         temporizadorAberturaChamado = 0
+    #         tempoEmAlerta = tempoEmAlerta + 5
 
-        else:
-            skiparTemporizador = True
-            alertaCPU = "CPU se encontra em normalidade."
-            alertasEmSequencia = 0
-            tempoEmAlerta = 0
+    #     else:
+    #         skiparTemporizador = True
+    #         alertaCPU = "CPU se encontra em normalidade."
+    #         alertasEmSequencia = 0
+    #         tempoEmAlerta = 0
 
-        if temporizadorAberturaChamado == 60:
-            temporizadorAberturaChamado = 0
+    #     if temporizadorAberturaChamado == 60:
+    #         temporizadorAberturaChamado = 0
 
-    print("\n" + alertaCPU + "\n")
-    print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado*5, "s / 5 min)")
-    print("""
-________________________________________________________________________________________
-|OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
-|quando o temporizador reiniciar caso tenha sido enviado um alerta anteriormente, porém|
-|se for capturado um dado alarmante enquanto a CPU estiver em normalidade, então o...  |
-|...temporizador será ignorado.                                                        |
-|______________________________________________________________________________________|
-    """)
+#     print("\n" + alertaCPU + "\n")
+#     print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado*5, "s / 5 min)")
+#     print("""
+# ________________________________________________________________________________________
+# |OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
+# |quando o temporizador reiniciar caso tenha sido enviado um alerta anteriormente, porém|
+# |se for capturado um dado alarmante enquanto a CPU estiver em normalidade, então o...  |
+# |...temporizador será ignorado.                                                        |
+# |______________________________________________________________________________________|
+#     """)
 
     print("==========================================>-----------------<=============================================\n")
 
-    con.commit()
+    con_mysql.commit()
+    con_mssql.commit()
     
 
 while True:
