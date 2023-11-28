@@ -75,7 +75,13 @@ def capturaTodos():
         "tempo_restante": psutil.sensors_battery().secsleft,
     }
 
-    print("Nível da bateria: " + str(round(ValoresBateria["nivel"])))
+    if ValoresBateria["tempo_restante"] < 0:
+        ValoresBateria["tempo_restante"] = -1
+
+    if ValoresBateria["tempo_restante"] > 4000000000:
+        ValoresBateria["tempo_restante"] = -1
+
+    print("Nível da bateria: " + str(ValoresBateria["nivel"]))
     print("Tempo Restante: " + str(round(ValoresBateria["tempo_restante"])))
 
     comando_mysql = "INSERT INTO Dados (idDados, cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)"
