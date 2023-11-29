@@ -12,7 +12,7 @@ data_e_hora = datetime.now()
 con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
 cursor_mysql = con_mysql.cursor()
 
-con_mssql = pyodbc.connect('DRIVER={SQL Server};SERVER=54.172.138.164;DATABASE=GraphCar;UID=sa;PWD=urubu100')
+con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=44.211.199.205;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
 cursor_mssql = con_mssql.cursor()
 
 temporizadorAberturaChamado = 0
@@ -61,7 +61,7 @@ def capturaTodos():
     print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
     
     if platform.system() != 'Windows':
-        Temperatura = str(psutil.sensors_temperatures()['coretemp'][0].current)
+        Temperatura = None #str(psutil.sensors_temperatures()['coretemp'][0].current)
         print("Temperatura da CPU: " + Temperatura + "°C")
 
     print("Espaço total de RAM: " + str(round(ValoresRAM["espacoTotalRAM"]/1e9,2)) + " Gb")
