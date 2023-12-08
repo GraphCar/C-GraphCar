@@ -94,11 +94,11 @@ def capturaTodos():
     comando_mssql = "INSERT INTO Dados (cpuUso, cpuTemperatura, gpuUso, gpuTemperatura, memoria, bateriaNivel, bateriaTaxa, bateriaTempoRestante , dateDado, fkCarro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)"
     print(ValoresBateria["tempo_restante"])
     if platform.system() != 'Windows':
-        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
+        dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 1)
         cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     else:
-        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
+        dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 1)
         cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     print("==========================================>-----------------<=============================================\n")
