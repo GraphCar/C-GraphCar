@@ -9,8 +9,8 @@ import requests
 import json
 
 data_e_hora = datetime.now()
-#con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
-#cursor_mysql = con_mysql.cursor()
+con_mysql = mysql.connector.connect(host='ContainerBD', database='GraphCar', user='GraphUser', password='Graph2023')
+cursor_mysql = con_mysql.cursor()
 
 con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=3.88.60.195;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
 cursor_mssql = con_mssql.cursor()
@@ -95,15 +95,15 @@ def capturaTodos():
     print(ValoresBateria["tempo_restante"])
     if platform.system() != 'Windows':
         dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-#        cursor_mysql.execute(comando_mysql,dados)
+        cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     else:
         dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-#        cursor_mysql.execute(comando_mysql,dados)
+        cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     print("==========================================>-----------------<=============================================\n")
 
-#    con_mysql.commit()
+    con_mysql.commit()
     con_mssql.commit()
     
 
