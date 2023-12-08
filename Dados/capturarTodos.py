@@ -12,7 +12,7 @@ data_e_hora = datetime.now()
 #con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
 #cursor_mysql = con_mysql.cursor()
 
-con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=44.211.199.205;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
+con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=3.88.60.195;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
 cursor_mssql = con_mssql.cursor()
 
 temporizadorAberturaChamado = 0
