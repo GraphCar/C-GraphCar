@@ -9,10 +9,10 @@ import requests
 import json
 
 data_e_hora = datetime.now()
-con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
-cursor_mysql = con_mysql.cursor()
+#con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
+#cursor_mysql = con_mysql.cursor()
 
-con_mssql = pyodbc.connect('DRIVER={SQL Server};SERVER=54.84.147.78;DATABASE=GraphCar;UID=sa;PWD=urubu100')
+con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=44.211.199.205;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
 cursor_mssql = con_mssql.cursor()
 
 temporizadorAberturaChamado = 0
@@ -61,7 +61,7 @@ def capturaTodos():
     print("Tempo ocioso: " + str(round(CPU["tempoOcioso"]/3600,1)) + "H")
     
     if platform.system() != 'Windows':
-        Temperatura = str(psutil.sensors_temperatures()['coretemp'][0].current)
+        Temperatura = "-1" #str(psutil.sensors_temperatures()['coretemp'][0].current)
         print("Temperatura da CPU: " + Temperatura + "°C")
 
     print("Espaço total de RAM: " + str(round(ValoresRAM["espacoTotalRAM"]/1e9,2)) + " Gb")
@@ -70,10 +70,16 @@ def capturaTodos():
     print("Porcentagem de uso da RAM: " + str(round(ValoresRAM["porcentagemUsoRAM"])) + " %")
     print("Espaço livre de RAM: " + str(round(ValoresRAM["espacoLivreRAM"]/1e9,2)) + " Gb")
 
-    ValoresBateria = {
-        "nivel": psutil.sensors_battery().percent,
-        "tempo_restante": psutil.sensors_battery().secsleft,
-    }
+    if psutil.sensors_battery() != None:
+        ValoresBateria = {
+            "nivel": psutil.sensors_battery().percent,
+            "tempo_restante": psutil.sensors_battery().secsleft,
+        }
+    else:
+        ValoresBateria = {
+            "nivel": -1,
+            "tempo_restante": -1,
+        }
 
     if ValoresBateria["tempo_restante"] < 0:
         ValoresBateria["tempo_restante"] = -1
@@ -89,15 +95,15 @@ def capturaTodos():
     print(ValoresBateria["tempo_restante"])
     if platform.system() != 'Windows':
         dados = (CPU["CPUAtual"], Temperatura, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-        cursor_mysql.execute(comando_mysql,dados)
+#        cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     else:
         dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
-        cursor_mysql.execute(comando_mysql,dados)
+#        cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
     print("==========================================>-----------------<=============================================\n")
 
-    con_mysql.commit()
+#    con_mysql.commit()
     con_mssql.commit()
     
 
