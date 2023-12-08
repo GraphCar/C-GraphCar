@@ -9,7 +9,7 @@ import requests
 import json
 
 data_e_hora = datetime.now()
-con_mysql = mysql.connector.connect(host='ContainerBD', database='GraphCar', user='GraphUser', password='Graph2023')
+con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
 cursor_mysql = con_mysql.cursor()
 
 con_mssql = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=3.88.60.195;DATABASE=GraphCar;UID=sa;PWD=urubu100;TrustServerCertificate=yes')
