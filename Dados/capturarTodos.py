@@ -12,7 +12,7 @@ data_e_hora = datetime.now()
 con_mysql = mysql.connector.connect(host='localhost', database='GraphCar', user='GraphUser', password='Graph2023')
 cursor_mysql = con_mysql.cursor()
 
-con_mssql = pyodbc.connect('DRIVER={SQL Server};SERVER=54.172.138.164;DATABASE=GraphCar;UID=sa;PWD=urubu100')
+con_mssql = pyodbc.connect('DRIVER={SQL Server};SERVER=54.84.147.78;DATABASE=GraphCar;UID=sa;PWD=urubu100')
 cursor_mssql = con_mssql.cursor()
 
 temporizadorAberturaChamado = 0
@@ -95,82 +95,6 @@ def capturaTodos():
         dados = (CPU["CPUAtual"], None, None, None, round(ValoresRAM["porcentagemUsoRAM"], 1), round(ValoresBateria["nivel"], 1), None, ValoresBateria["tempo_restante"], 2)
         cursor_mysql.execute(comando_mysql,dados)
         cursor_mssql.execute(comando_mssql, dados)
-
-    # temporizadorAberturaChamado = temporizadorAberturaChamado+1
-    # if temporizadorAberturaChamado == 60 or skiparTemporizador:
-
-    #     if CPU["CPUAtual"] > 50:
-
-    #         alertasEmSequencia = alertasEmSequencia + 1
-            
-    #         if alertasEmSequencia >= 2 :
-
-    #             alertaCPU = {"text": f"""
-    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
-    #             """}
-
-    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-
-    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
-
-    #         else:
-    #             alertaCPU = {"text": f""" 
-    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 50% De utilização.
-    #             """} 
-    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-
-    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização."
-
-    #         skiparTemporizador = False
-    #         temporizadorAberturaChamado = 0
-    #         tempoEmAlerta = tempoEmAlerta + 5
-
-    #     elif CPU["CPUAtual"] > 30:
-            
-    #         alertasEmSequencia = alertasEmSequencia + 1
-
-    #         if alertasEmSequencia >= 2 :
-    #             alertaCPU = {"text": f"""
-    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização. Essa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "{tempoEmAlerta}min e até agora não houve melhoras!!"
-    #             """}
-
-    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-
-    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
-                
-    #         else:
-    #             alertaCPU = {"text": f"""
-    #             🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.
-    #             """}
-
-    #             # requests.post(chatEscolhido, data=json.dumps(alertaCPU))
-                
-    #             alertaCPU = "🚨ALERTA DA CPU🚨 Detectamos que a CPU está com mais de 30% De utilização.\nEssa não é a primeira vez emitimos um alerta a respeito dela, já se passaram "+ str(tempoEmAlerta) +" min e até agora...\n...não houve melhoras!!"
-
-    #         skiparTemporizador = False
-    #         temporizadorAberturaChamado = 0
-    #         tempoEmAlerta = tempoEmAlerta + 5
-
-    #     else:
-    #         skiparTemporizador = True
-    #         alertaCPU = "CPU se encontra em normalidade."
-    #         alertasEmSequencia = 0
-    #         tempoEmAlerta = 0
-
-    #     if temporizadorAberturaChamado == 60:
-    #         temporizadorAberturaChamado = 0
-
-#     print("\n" + alertaCPU + "\n")
-#     print(">> Temporizador para abertura de chamado caso necessário: (",temporizadorAberturaChamado*5, "s / 5 min)")
-#     print("""
-# ________________________________________________________________________________________
-# |OBS: Alertas no terminal e o envio deles para o Slack / Jira serão realizados somente |
-# |quando o temporizador reiniciar caso tenha sido enviado um alerta anteriormente, porém|
-# |se for capturado um dado alarmante enquanto a CPU estiver em normalidade, então o...  |
-# |...temporizador será ignorado.                                                        |
-# |______________________________________________________________________________________|
-#     """)
-
     print("==========================================>-----------------<=============================================\n")
 
     con_mysql.commit()
